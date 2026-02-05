@@ -133,7 +133,8 @@ twinscale_lite.db
 logs/
 *.log
 *.md
-
+*.docx
+*.pdf
 # Environment variables
 .env
 .env.local

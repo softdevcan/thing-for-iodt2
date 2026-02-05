@@ -38,7 +38,9 @@
     "refresh": "Yenile",
     "clear": "Temizle",
     "apply": "Uygula",
-    "reset": "Sıfırla"
+    "reset": "Sıfırla",
+    "optional": "opsiyonel",
+    "select": "Seç"
   },
   "things": {
     "title": "Thing'ler",
@@ -104,7 +106,24 @@
     "typeFloat": "Ondalık Sayı",
     "typeBoolean": "Boolean",
     "typeObject": "Nesne",
-    "typeArray": "Dizi"
+    "typeArray": "Dizi",
+    "thingType": "Thing Modelleme Tipi",
+    "thingTypeDescription": "Bu Thing'in sistemde nasıl modelleneceğini seçin",
+    "typeDevice": "Cihaz (Çoklu Sensör)",
+    "typeDeviceDesc": "Bir Thing, birden fazla sensör/aktüatöre sahip fiziksel bir cihazı temsil eder",
+    "typeSensor": "Tekil Sensör",
+    "typeSensorDesc": "Bir Thing, 1-2 property'ye sahip bağımsız bir sensörü temsil eder",
+    "typeComponent": "Bileşen-tabanlı (Hiyerarşik)",
+    "typeComponentDesc": "Bir Thing, ilişkiler ile alt bileşenlere sahip bir konteynerdir",
+    "domainMetadata": "Cihaz Bilgileri",
+    "manufacturer": "Üretici",
+    "manufacturerPlaceholder": "örn: Siemens, Bosch, Innova",
+    "model": "Model",
+    "modelPlaceholder": "örn: DHT22, S7-1200",
+    "serialNumber": "Seri Numarası",
+    "serialNumberPlaceholder": "örn: SN-12345678",
+    "firmwareVersion": "Firmware Versiyonu",
+    "firmwareVersionPlaceholder": "örn: v2.3.1"
   },
   "search": {
     "title": "Thing Ara",
@@ -169,5 +188,37 @@
   "footer": {
     "copyright": "© 2024 TwinScale Lite. Tüm hakları saklıdır.",
     "version": "Sürüm"
+  },
+  "dtdl": {
+    "selectInterface": "DTDL Arayüzü Seç",
+    "selectInterfaceDescription": "Thing'iniz için bir DTDL arayüzü seçin",
+    "searchPlaceholder": "Arayüzlerde ara...",
+    "allCategories": "Tüm Kategoriler",
+    "allDomains": "Tüm Alanlar",
+    "showingResults": "{{total}} arayüzden {{count}} tanesi gösteriliyor",
+    "noInterfacesFound": "Arayüz bulunamadı",
+    "selectInterfaceToView": "Detayları görmek için bir arayüz seçin",
+    "errorLoadingInterfaces": "DTDL arayüzleri yüklenemedi",
+    "extends": "Genişletir",
+    "contents": "İçerikler",
+    "telemetry": "Telemetri",
+    "properties": "Özellikler",
+    "commands": "Komutlar",
+    "components": "Bileşenler",
+    "telemetryFields": "Telemetri Alanları",
+    "propertyFields": "Özellik Alanları",
+    "componentFields": "Bileşen Alanları",
+    "selected": "Seçili",
+    "noInterfaceSelected": "Arayüz seçilmedi",
+    "useDTDL": "DTDL Arayüzü Kullan",
+    "useDTDLDescription": "Thing modelinizi standartlaştırmak için önceden tanımlanmış bir DTDL arayüzü seçin",
+    "selectedInterface": "Seçili Arayüz",
+    "changeInterface": "Arayüzü Değiştir",
+    "removeInterface": "Arayüzü Kaldır",
+    "interfaceInfo": "Arayüz Bilgisi",
+    "autoFill": "Otomatik doldur",
+    "autoFillDescription": "Seçili DTDL arayüzüne göre telemetri ve özellik alanlarını otomatik olarak doldur",
+    "interfaceSelected": "DTDL arayüzü seçildi: {{name}}",
+    "fieldsAutoFilled": "Alanlar DTDL arayüzünden otomatik olarak dolduruldu"
   }
 }

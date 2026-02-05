@@ -1,0 +1,34 @@
+{
+  "@context": "dtmi:dtdl:context;2",
+  "@id": "dtmi:iodt2:HumiditySensor;1",
+  "@type": "Interface",
+  "displayName": "Humidity Sensor",
+  "description": "Digital twin for humidity sensor devices",
+  "extends": "dtmi:iodt2:SensorTwin;1",
+  "contents": [
+    {
+      "@type": "Telemetry",
+      "name": "humidity",
+      "displayName": "Relative Humidity",
+      "description": "Current relative humidity reading",
+      "schema": "double",
+      "unit": "percent"
+    },
+    {
+      "@type": "Property",
+      "name": "humidityAlertMin",
+      "displayName": "Minimum Humidity Alert",
+      "description": "Minimum humidity threshold for alerts (%)",
+      "schema": "double",
+      "writable": true
+    },
+    {
+      "@type": "Property",
+      "name": "humidityAlertMax",
+      "displayName": "Maximum Humidity Alert",
+      "description": "Maximum humidity threshold for alerts (%)",
+      "schema": "double",
+      "writable": true
+    }
+  ]
+}

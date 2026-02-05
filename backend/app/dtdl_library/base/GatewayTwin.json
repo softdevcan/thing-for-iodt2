@@ -1,0 +1,69 @@
+{
+  "@context": "dtmi:dtdl:context;2",
+  "@id": "dtmi:iodt2:GatewayTwin;1",
+  "@type": "Interface",
+  "displayName": "Gateway Twin",
+  "description": "Base interface for gateway devices that manage multiple sensors and actuators.",
+  "extends": "dtmi:iodt2:BaseTwin;1",
+  "contents": [
+    {
+      "@type": "Property",
+      "name": "connectedDeviceCount",
+      "displayName": "Connected Device Count",
+      "description": "Number of devices currently connected to this gateway",
+      "schema": "integer",
+      "writable": false
+    },
+    {
+      "@type": "Property",
+      "name": "communicationProtocol",
+      "displayName": "Communication Protocol",
+      "description": "Primary communication protocol used",
+      "schema": {
+        "@type": "Enum",
+        "valueSchema": "string",
+        "enumValues": [
+          {"name": "mqtt", "enumValue": "mqtt"},
+          {"name": "http", "enumValue": "http"},
+          {"name": "coap", "enumValue": "coap"},
+          {"name": "modbus", "enumValue": "modbus"},
+          {"name": "opcua", "enumValue": "opcua"}
+        ]
+      },
+      "writable": false
+    },
+    {
+      "@type": "Telemetry",
+      "name": "cpuUsage",
+      "displayName": "CPU Usage",
+      "description": "Current CPU usage percentage",
+      "schema": "double"
+    },
+    {
+      "@type": "Telemetry",
+      "name": "memoryUsage",
+      "displayName": "Memory Usage",
+      "description": "Current memory usage percentage",
+      "schema": "double"
+    },
+    {
+      "@type": "Telemetry",
+      "name": "uptime",
+      "displayName": "Uptime",
+      "description": "Gateway uptime in seconds",
+      "schema": "long"
+    },
+    {
+      "@type": "Command",
+      "name": "reboot",
+      "displayName": "Reboot Gateway",
+      "description": "Reboot the gateway device"
+    },
+    {
+      "@type": "Relationship",
+      "name": "manages",
+      "displayName": "Manages Device",
+      "description": "Relationship to devices managed by this gateway"
+    }
+  ]
+}

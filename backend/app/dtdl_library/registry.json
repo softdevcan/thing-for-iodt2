@@ -1,0 +1,114 @@
+{
+  "version": "1.0.0",
+  "description": "DTDL Interface Registry for TwinScale/IoDT2 Platform",
+  "lastUpdated": "2026-02-05",
+  "interfaces": [
+    {
+      "dtmi": "dtmi:iodt2:BaseTwin;1",
+      "displayName": "Base Twin",
+      "category": "base",
+      "filePath": "base/BaseTwin.json",
+      "description": "Root interface for all digital twins",
+      "tags": ["base", "foundation"]
+    },
+    {
+      "dtmi": "dtmi:iodt2:SensorTwin;1",
+      "displayName": "Sensor Twin",
+      "category": "base",
+      "filePath": "base/SensorTwin.json",
+      "description": "Base interface for sensor devices",
+      "extends": ["dtmi:iodt2:BaseTwin;1"],
+      "tags": ["base", "sensor"]
+    },
+    {
+      "dtmi": "dtmi:iodt2:ActuatorTwin;1",
+      "displayName": "Actuator Twin",
+      "category": "base",
+      "filePath": "base/ActuatorTwin.json",
+      "description": "Base interface for actuator devices",
+      "extends": ["dtmi:iodt2:BaseTwin;1"],
+      "tags": ["base", "actuator"]
+    },
+    {
+      "dtmi": "dtmi:iodt2:GatewayTwin;1",
+      "displayName": "Gateway Twin",
+      "category": "base",
+      "filePath": "base/GatewayTwin.json",
+      "description": "Base interface for gateway devices",
+      "extends": ["dtmi:iodt2:BaseTwin;1"],
+      "tags": ["base", "gateway", "infrastructure"]
+    },
+    {
+      "dtmi": "dtmi:iodt2:TemperatureSensor;1",
+      "displayName": "Temperature Sensor",
+      "category": "environmental",
+      "filePath": "domain/environmental/TemperatureSensor.json",
+      "description": "Temperature sensor digital twin",
+      "extends": ["dtmi:iodt2:SensorTwin;1"],
+      "tags": ["sensor", "environmental", "temperature"],
+      "thingType": "sensor",
+      "telemetry": ["temperature"],
+      "properties": ["temperatureUnit", "alertThreshold"]
+    },
+    {
+      "dtmi": "dtmi:iodt2:HumiditySensor;1",
+      "displayName": "Humidity Sensor",
+      "category": "environmental",
+      "filePath": "domain/environmental/HumiditySensor.json",
+      "description": "Humidity sensor digital twin",
+      "extends": ["dtmi:iodt2:SensorTwin;1"],
+      "tags": ["sensor", "environmental", "humidity"],
+      "thingType": "sensor",
+      "telemetry": ["humidity"],
+      "properties": ["humidityAlertMin", "humidityAlertMax"]
+    },
+    {
+      "dtmi": "dtmi:iodt2:WeatherStation;1",
+      "displayName": "Weather Station",
+      "category": "environmental",
+      "filePath": "domain/environmental/WeatherStation.json",
+      "description": "Multi-sensor weather station (Component-based)",
+      "extends": ["dtmi:iodt2:BaseTwin;1"],
+      "tags": ["device", "environmental", "weather", "multi-sensor", "component"],
+      "thingType": "device",
+      "components": ["temperatureSensor", "humiditySensor"],
+      "telemetry": ["pressure", "windSpeed", "windDirection", "rainfall"],
+      "commands": ["startDataCollection", "stopDataCollection"]
+    },
+    {
+      "dtmi": "dtmi:iodt2:PM25Sensor;1",
+      "displayName": "PM2.5 Sensor",
+      "category": "air_quality",
+      "filePath": "domain/air_quality/PM25Sensor.json",
+      "description": "PM2.5 air quality sensor",
+      "extends": ["dtmi:iodt2:SensorTwin;1"],
+      "tags": ["sensor", "air-quality", "pm25", "pollution"],
+      "thingType": "sensor",
+      "telemetry": ["pm25"],
+      "properties": ["aqi", "aqiCategory", "alertThreshold"]
+    }
+  ],
+  "thingTypeMapping": {
+    "device": [
+      "dtmi:iodt2:WeatherStation;1"
+    ],
+    "sensor": [
+      "dtmi:iodt2:TemperatureSensor;1",
+      "dtmi:iodt2:HumiditySensor;1",
+      "dtmi:iodt2:PM25Sensor;1"
+    ],
+    "component": [
+      "dtmi:iodt2:WeatherStation;1"
+    ]
+  },
+  "domainMapping": {
+    "environmental": [
+      "dtmi:iodt2:TemperatureSensor;1",
+      "dtmi:iodt2:HumiditySensor;1",
+      "dtmi:iodt2:WeatherStation;1"
+    ],
+    "air_quality": [
+      "dtmi:iodt2:PM25Sensor;1"
+    ]
+  }
+}

@@ -1,11 +1,11 @@
 """
 TwinScale-Lite API Router
 
-Simplified API with TwinScale and Tenant endpoints.
+Simplified API with TwinScale, Tenant, and DTDL endpoints.
 """
 
 from fastapi import APIRouter
-from .v2 import twinscale, tenants
+from .v2 import twinscale, tenants, dtdl
 
 # Create main API router
 api_router = APIRouter()
@@ -22,6 +22,12 @@ api_router.include_router(
     tenants.router,
     prefix="/v2/tenants",
     tags=["tenants"]
+)
+
+# Include DTDL routes
+api_router.include_router(
+    dtdl.router,
+    prefix="/v2"
 )
 
 

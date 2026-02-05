@@ -38,7 +38,9 @@
     "refresh": "Refresh",
     "clear": "Clear",
     "apply": "Apply",
-    "reset": "Reset"
+    "reset": "Reset",
+    "optional": "optional",
+    "select": "Select"
   },
   "things": {
     "title": "Things",
@@ -104,7 +106,24 @@
     "typeFloat": "Float",
     "typeBoolean": "Boolean",
     "typeObject": "Object",
-    "typeArray": "Array"
+    "typeArray": "Array",
+    "thingType": "Thing Modeling Type",
+    "thingTypeDescription": "Select how this Thing will be modeled in the system",
+    "typeDevice": "Device (Multi-Sensor)",
+    "typeDeviceDesc": "One Thing represents one physical device with multiple sensors/actuators",
+    "typeSensor": "Single Sensor",
+    "typeSensorDesc": "One Thing represents one independent sensor with 1-2 properties",
+    "typeComponent": "Component-based (Hierarchical)",
+    "typeComponentDesc": "One Thing is a container with child components via relationships",
+    "domainMetadata": "Domain & Device Information",
+    "manufacturer": "Manufacturer",
+    "manufacturerPlaceholder": "e.g., Siemens, Bosch, Innova",
+    "model": "Model",
+    "modelPlaceholder": "e.g., DHT22, S7-1200",
+    "serialNumber": "Serial Number",
+    "serialNumberPlaceholder": "e.g., SN-12345678",
+    "firmwareVersion": "Firmware Version",
+    "firmwareVersionPlaceholder": "e.g., v2.3.1"
   },
   "search": {
     "title": "Search Things",
@@ -169,5 +188,37 @@
   "footer": {
     "copyright": "© 2024 TwinScale Lite. All rights reserved.",
     "version": "Version"
+  },
+  "dtdl": {
+    "selectInterface": "Select DTDL Interface",
+    "selectInterfaceDescription": "Browse and select a DTDL interface for your Thing",
+    "searchPlaceholder": "Search interfaces...",
+    "allCategories": "All Categories",
+    "allDomains": "All Domains",
+    "showingResults": "Showing {{count}} of {{total}} interfaces",
+    "noInterfacesFound": "No interfaces found",
+    "selectInterfaceToView": "Select an interface to view details",
+    "errorLoadingInterfaces": "Failed to load DTDL interfaces",
+    "extends": "Extends",
+    "contents": "Contents",
+    "telemetry": "Telemetry",
+    "properties": "Properties",
+    "commands": "Commands",
+    "components": "Components",
+    "telemetryFields": "Telemetry Fields",
+    "propertyFields": "Property Fields",
+    "componentFields": "Component Fields",
+    "selected": "Selected",
+    "noInterfaceSelected": "No interface selected",
+    "useDTDL": "Use DTDL Interface",
+    "useDTDLDescription": "Select a predefined DTDL interface to standardize your Thing model",
+    "selectedInterface": "Selected Interface",
+    "changeInterface": "Change Interface",
+    "removeInterface": "Remove Interface",
+    "interfaceInfo": "Interface Info",
+    "autoFill": "Auto-fill fields",
+    "autoFillDescription": "Automatically populate telemetry and property fields based on selected DTDL interface",
+    "interfaceSelected": "DTDL interface selected: {{name}}",
+    "fieldsAutoFilled": "Fields auto-filled from DTDL interface"
   }
 }

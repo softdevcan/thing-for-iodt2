@@ -1,0 +1,53 @@
+{
+  "@context": "dtmi:dtdl:context;2",
+  "@id": "dtmi:iodt2:PM25Sensor;1",
+  "@type": "Interface",
+  "displayName": "PM2.5 Sensor",
+  "description": "Particulate Matter 2.5 (fine particles) sensor for air quality monitoring",
+  "extends": "dtmi:iodt2:SensorTwin;1",
+  "contents": [
+    {
+      "@type": "Telemetry",
+      "name": "pm25",
+      "displayName": "PM2.5 Concentration",
+      "description": "Particulate matter 2.5 concentration",
+      "schema": "double",
+      "unit": "microgramPerCubicMetre"
+    },
+    {
+      "@type": "Property",
+      "name": "aqi",
+      "displayName": "Air Quality Index",
+      "description": "Calculated Air Quality Index based on PM2.5",
+      "schema": "integer",
+      "writable": false
+    },
+    {
+      "@type": "Property",
+      "name": "aqiCategory",
+      "displayName": "AQI Category",
+      "description": "Air quality category",
+      "schema": {
+        "@type": "Enum",
+        "valueSchema": "string",
+        "enumValues": [
+          {"name": "good", "displayName": "Good", "enumValue": "good"},
+          {"name": "moderate", "displayName": "Moderate", "enumValue": "moderate"},
+          {"name": "unhealthySensitive", "displayName": "Unhealthy for Sensitive Groups", "enumValue": "unhealthy_sensitive"},
+          {"name": "unhealthy", "displayName": "Unhealthy", "enumValue": "unhealthy"},
+          {"name": "veryUnhealthy", "displayName": "Very Unhealthy", "enumValue": "very_unhealthy"},
+          {"name": "hazardous", "displayName": "Hazardous", "enumValue": "hazardous"}
+        ]
+      },
+      "writable": false
+    },
+    {
+      "@type": "Property",
+      "name": "alertThreshold",
+      "displayName": "Alert Threshold",
+      "description": "PM2.5 threshold for alerts (µg/m³)",
+      "schema": "double",
+      "writable": true
+    }
+  ]
+}

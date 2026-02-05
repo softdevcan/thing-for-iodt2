@@ -102,6 +102,18 @@ class TwinScaleCreateRequest(BaseModel):
     # Store options
     store_in_rdf: bool = True
 
+    # NEW: Thing Type (Phase 1)
+    thing_type: Literal["device", "sensor", "component"] = "device"
+
+    # NEW: Domain Metadata (Phase 1)
+    manufacturer: Optional[str] = None
+    model: Optional[str] = None
+    serial_number: Optional[str] = None
+    firmware_version: Optional[str] = None
+
+    # NEW: DTDL Integration (Phase 2)
+    dtdl_interface: Optional[Dict[str, Any]] = None  # Selected DTDL interface metadata
+
 
 class TwinScaleCreateResponse(BaseModel):
     """Response model for TwinScale creation"""
@@ -192,10 +204,18 @@ async def create_twinscale_thing(
         # Initialize generator
         generator = TwinScaleGeneratorService()
 
-        # Generate YAML files
+        # Generate YAML files with new parameters
         interface_yaml = generator.generate_twin_interface_yaml(
             thing_description,
-            include_service_spec=request.include_service_spec
+            include_service_spec=request.include_service_spec,
+            thing_type=request.thing_type,
+            domain_metadata={
+                "manufacturer": request.manufacturer,
+                "model": request.model,
+                "serial_number": request.serial_number,
+                "firmware_version": request.firmware_version,
+            },
+            dtdl_interface=request.dtdl_interface
         )
 
         instance_yaml = generator.generate_twin_instance_yaml(thing_description)
@@ -211,15 +231,29 @@ async def create_twinscale_thing(
                 logger.info(f"Storing TwinScale RDF for: {request.id}")
                 rdf_service = TwinScaleRDFService()
 
+                # Prepare metadata
+                metadata = {
+                    "tenant_id": tenant_id,
+                    "name": request.name,
+                    "description": request.description,
+                    # NEW: Thing Type and Domain Metadata
+                    "thing_type": request.thing_type,
+                    "manufacturer": request.manufacturer,
+                    "model": request.model,
+                    "serial_number": request.serial_number,
+                    "firmware_version": request.firmware_version,
+                }
+
+                # Add DTDL interface metadata if provided
+                if request.dtdl_interface:
+                    metadata["dtdl_interface"] = request.dtdl_interface.get("dtmi")
+                    metadata["dtdl_interface_name"] = request.dtdl_interface.get("displayName")
+
                 await rdf_service.store_twinscale_yaml(
                     interface_yaml=interface_yaml,
                     instance_yaml=instance_yaml,
                     thing_id=request.id,
-                    metadata={
-                        "tenant_id": tenant_id,
-                        "name": request.name,
-                        "description": request.description
-                    }
+                    metadata=metadata
                 )
                 stored_in_rdf = True
                 logger.info(f"Successfully stored TwinScale RDF for: {request.id}")

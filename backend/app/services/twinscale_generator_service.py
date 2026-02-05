@@ -70,7 +70,10 @@ class TwinScaleGeneratorService:
     def generate_twin_interface_yaml(
         self,
         thing_description: Dict[str, Any],
-        include_service_spec: bool = True
+        include_service_spec: bool = True,
+        thing_type: str = "device",
+        domain_metadata: Optional[Dict[str, str]] = None,
+        dtdl_interface: Optional[Dict[str, Any]] = None
     ) -> str:
         """
         Generate TwinInterface YAML from WoT Thing Description
@@ -78,6 +81,9 @@ class TwinScaleGeneratorService:
         Args:
             thing_description: W3C WoT Thing Description dict
             include_service_spec: Whether to include service/container spec
+            thing_type: Thing modeling type ('device', 'sensor', 'component')
+            domain_metadata: Domain metadata (manufacturer, model, serial_number, firmware_version)
+            dtdl_interface: Optional DTDL interface metadata (dtmi, displayName, etc.)
 
         Returns:
             YAML string representing TwinInterface
@@ -92,18 +98,43 @@ class TwinScaleGeneratorService:
 
         interface_name = self._normalize_name(thing_id)
 
+        # Build labels
+        labels = {
+            "generated-by": "iodt2-platform",
+            "generated-at": datetime.utcnow().isoformat(),
+            "thing-type": thing_type,  # NEW: Add thing type
+        }
+
+        # Build annotations
+        annotations = {
+            "source": "wot-thing-description",
+            "original-id": thing_id,
+        }
+
+        # Add domain metadata to annotations if provided
+        if domain_metadata:
+            if domain_metadata.get("manufacturer"):
+                annotations["manufacturer"] = domain_metadata["manufacturer"]
+            if domain_metadata.get("model"):
+                annotations["model"] = domain_metadata["model"]
+            if domain_metadata.get("serial_number"):
+                annotations["serialNumber"] = domain_metadata["serial_number"]
+
+        # Add DTDL interface metadata if provided
+        if dtdl_interface:
+            annotations["dtdl-interface"] = dtdl_interface.get("dtmi", "")
+            annotations["dtdl-interface-name"] = dtdl_interface.get("displayName", "")
+            if dtdl_interface.get("category"):
+                annotations["dtdl-category"] = dtdl_interface["category"]
+            if domain_metadata.get("firmware_version"):
+                annotations["firmwareVersion"] = domain_metadata["firmware_version"]
+
         # Build TwinInterface CR
         interface_cr = TwinInterfaceCR(
             metadata=TwinScaleMetadata(
                 name=interface_name,
-                labels={
-                    "generated-by": "iodt2-platform",
-                    "generated-at": datetime.utcnow().isoformat(),
-                },
-                annotations={
-                    "source": "wot-thing-description",
-                    "original-id": thing_id,
-                }
+                labels=labels,
+                annotations=annotations,
             ),
             spec=TwinInterfaceSpec(
                 name=interface_name,

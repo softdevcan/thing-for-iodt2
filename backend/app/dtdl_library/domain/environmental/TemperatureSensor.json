@@ -1,0 +1,42 @@
+{
+  "@context": "dtmi:dtdl:context;2",
+  "@id": "dtmi:iodt2:TemperatureSensor;1",
+  "@type": "Interface",
+  "displayName": "Temperature Sensor",
+  "description": "Digital twin for temperature sensor devices",
+  "extends": "dtmi:iodt2:SensorTwin;1",
+  "contents": [
+    {
+      "@type": "Telemetry",
+      "name": "temperature",
+      "displayName": "Temperature",
+      "description": "Current temperature reading",
+      "schema": "double",
+      "unit": "degreeCelsius"
+    },
+    {
+      "@type": "Property",
+      "name": "temperatureUnit",
+      "displayName": "Temperature Unit",
+      "description": "Unit for temperature readings",
+      "schema": {
+        "@type": "Enum",
+        "valueSchema": "string",
+        "enumValues": [
+          {"name": "celsius", "displayName": "Celsius", "enumValue": "celsius"},
+          {"name": "fahrenheit", "displayName": "Fahrenheit", "enumValue": "fahrenheit"},
+          {"name": "kelvin", "displayName": "Kelvin", "enumValue": "kelvin"}
+        ]
+      },
+      "writable": true
+    },
+    {
+      "@type": "Property",
+      "name": "alertThreshold",
+      "displayName": "Alert Threshold",
+      "description": "Temperature threshold for alerts (in configured unit)",
+      "schema": "double",
+      "writable": true
+    }
+  ]
+}

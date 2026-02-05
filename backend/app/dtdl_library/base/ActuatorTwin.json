@@ -1,0 +1,53 @@
+{
+  "@context": "dtmi:dtdl:context;2",
+  "@id": "dtmi:iodt2:ActuatorTwin;1",
+  "@type": "Interface",
+  "displayName": "Actuator Twin",
+  "description": "Base interface for actuator devices. Extends BaseTwin with actuator-specific capabilities.",
+  "extends": "dtmi:iodt2:BaseTwin;1",
+  "contents": [
+    {
+      "@type": "Property",
+      "name": "actuatorType",
+      "displayName": "Actuator Type",
+      "description": "Type of actuator (motor, valve, relay, etc.)",
+      "schema": "string",
+      "writable": false
+    },
+    {
+      "@type": "Property",
+      "name": "powerConsumption",
+      "displayName": "Power Consumption",
+      "description": "Current power consumption in watts",
+      "schema": "double",
+      "writable": false
+    },
+    {
+      "@type": "Property",
+      "name": "isEnabled",
+      "displayName": "Is Enabled",
+      "description": "Whether the actuator is enabled",
+      "schema": "boolean",
+      "writable": true
+    },
+    {
+      "@type": "Telemetry",
+      "name": "operationCount",
+      "displayName": "Operation Count",
+      "description": "Total number of operations performed",
+      "schema": "long"
+    },
+    {
+      "@type": "Command",
+      "name": "enable",
+      "displayName": "Enable Actuator",
+      "description": "Enable the actuator"
+    },
+    {
+      "@type": "Command",
+      "name": "disable",
+      "displayName": "Disable Actuator",
+      "description": "Disable the actuator"
+    }
+  ]
+}

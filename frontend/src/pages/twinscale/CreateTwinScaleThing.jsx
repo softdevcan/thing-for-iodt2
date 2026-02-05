@@ -7,12 +7,16 @@ import { Textarea } from '@/components/ui/textarea'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import Editor from '@monaco-editor/react'
 import { useToast } from '@/hooks/use-toast'
-import { Plus, Loader2, Check, Trash2, MapPin, Building2 } from 'lucide-react'
+import { Plus, Loader2, Check, Trash2, MapPin, Building2, Layers, Info, FileCode } from 'lucide-react'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Label } from '@/components/ui/label'
+import { Badge } from '@/components/ui/badge'
 import TwinScaleService from '@/services/twinscaleService'
 import MapComponent from '@/components/map/MapComponent'
 import { useTranslation } from 'react-i18next'
 import useTenantStore from '@/store/useTenantStore'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import DTDLSelectionModal from '@/components/dtdl/DTDLSelectionModal'
 
 const CreateTwinScaleThing = () => {
   const { t } = useTranslation()
@@ -35,7 +39,20 @@ const CreateTwinScaleThing = () => {
     store_in_rdf: true,
     latitude: 39.9334, // Default Ankara
     longitude: 32.8597,
+    // NEW: Thing Type
+    thing_type: 'device', // 'device', 'sensor', 'component'
+    // NEW: Domain Metadata
+    manufacturer: '',
+    model: '',
+    serial_number: '',
+    firmware_version: '',
+    // NEW: DTDL Integration
+    dtdl_interface: null, // Selected DTDL interface
+    dtdl_interface_summary: null, // Interface summary for UI
   })
+
+  // DTDL Modal state
+  const [showDTDLModal, setShowDTDLModal] = useState(false)
 
   // YAML preview state
   const [interfaceYaml, setInterfaceYaml] = useState('')
@@ -71,12 +88,35 @@ const CreateTwinScaleThing = () => {
 
       const normalizedId = cleanId.toLowerCase().replace(/[^a-z0-9-]/g, '-')
 
+      // Build labels section
+      const labelsSection = []
+      if (currentTenant) {
+        labelsSection.push(`    tenant: ${currentTenant.tenant_id}`)
+      }
+      labelsSection.push(`    thing-type: ${formData.thing_type}`)
+
+      // Build annotations section
+      const annotationsSection = []
+      if (formData.manufacturer) {
+        annotationsSection.push(`    manufacturer: "${formData.manufacturer}"`)
+      }
+      if (formData.model) {
+        annotationsSection.push(`    model: "${formData.model}"`)
+      }
+      if (formData.serial_number) {
+        annotationsSection.push(`    serialNumber: "${formData.serial_number}"`)
+      }
+      if (formData.firmware_version) {
+        annotationsSection.push(`    firmwareVersion: "${formData.firmware_version}"`)
+      }
+
       // Simple YAML preview generation
       const interfacePreview = `apiVersion: dtd.twinscale/v0
 kind: TwinInterface
 metadata:
   name: ems-iodt2-${normalizedId}
-  ${currentTenant ? `labels:\n    tenant: ${currentTenant.tenant_id}` : ''}
+  labels:
+${labelsSection.join('\n')}${annotationsSection.length > 0 ? `\n  annotations:\n${annotationsSection.join('\n')}` : ''}
 spec:
   name: ems-iodt2-${normalizedId}
   properties:
@@ -92,11 +132,20 @@ ${formData.commands.map(c => `    - name: ${c.name}
       description: ${c.description || ''}`).join('\n') || '    []'}`
 
       setInterfaceYaml(interfacePreview)
+
+      // Instance YAML with labels
+      const instanceLabelsSection = []
+      if (currentTenant) {
+        instanceLabelsSection.push(`    tenant: ${currentTenant.tenant_id}`)
+      }
+      instanceLabelsSection.push(`    thing-type: ${formData.thing_type}`)
+
       setInstanceYaml(`apiVersion: dtd.twinscale/v0
 kind: TwinInstance
 metadata:
   name: ems-iodt2-${normalizedId}
-  ${currentTenant ? `labels:\n    tenant: ${currentTenant.tenant_id}` : ''}
+  labels:
+${instanceLabelsSection.join('\n')}
 spec:
   name: ems-iodt2-${normalizedId}
   interface: ems-iodt2-${normalizedId}
@@ -164,6 +213,54 @@ spec:
     const newProperties = [...formData.properties]
     newProperties[index] = { ...newProperties[index], [field]: value }
     setFormData({ ...formData, properties: newProperties })
+  }
+
+  // DTDL Handlers
+  const handleDTDLSelect = (selectedInterface, interfaceSummary) => {
+    setFormData({
+      ...formData,
+      dtdl_interface: selectedInterface,
+      dtdl_interface_summary: interfaceSummary,
+    })
+    toast({
+      title: t('common.success'),
+      description: t('dtdl.interfaceSelected', { name: selectedInterface.displayName }),
+    })
+  }
+
+  const handleRemoveDTDL = () => {
+    setFormData({
+      ...formData,
+      dtdl_interface: null,
+      dtdl_interface_summary: null,
+    })
+  }
+
+  const handleAutoFillFromDTDL = () => {
+    if (!formData.dtdl_interface_summary) return
+
+    const summary = formData.dtdl_interface_summary
+
+    // Auto-fill properties from DTDL
+    const dtdlProperties = summary.propertyNames?.map((name) => ({
+      name,
+      type: 'string', // Default type, would need full interface to get actual type
+      description: '',
+      writable: true,
+      unit: '',
+      minimum: null,
+      maximum: null,
+    })) || []
+
+    setFormData({
+      ...formData,
+      properties: [...formData.properties, ...dtdlProperties],
+    })
+
+    toast({
+      title: t('common.success'),
+      description: t('dtdl.fieldsAutoFilled'),
+    })
   }
 
   const addRelationship = () => {
@@ -265,6 +362,207 @@ spec:
         </Alert>
       )}
 
+      {/* Thing Type Selector */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Layers className="h-5 w-5" />
+            {t('createThing.thingType')}
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            {t('createThing.thingTypeDescription')}
+          </p>
+        </CardHeader>
+        <CardContent>
+          <RadioGroup
+            value={formData.thing_type}
+            onValueChange={(value) => setFormData({ ...formData, thing_type: value })}
+            className="space-y-3"
+          >
+            {/* Device Option */}
+            <div className="flex items-start space-x-3 border rounded-lg p-4 hover:bg-accent transition-colors cursor-pointer">
+              <RadioGroupItem value="device" id="device" className="mt-1" />
+              <Label htmlFor="device" className="flex-1 cursor-pointer">
+                <div className="font-semibold text-base mb-1">
+                  📦 {t('createThing.typeDevice')}
+                </div>
+                <div className="text-sm text-muted-foreground space-y-1">
+                  <p>{t('createThing.typeDeviceDesc')}</p>
+                  <p className="text-xs italic">
+                    <strong>Example:</strong> Weather station with temperature, humidity, pressure sensors
+                  </p>
+                  <div className="flex gap-2 mt-2">
+                    <Badge variant="secondary" className="text-xs">DTDL: Multiple Telemetry</Badge>
+                    <Badge variant="secondary" className="text-xs">Ditto: Multiple Features</Badge>
+                  </div>
+                </div>
+              </Label>
+            </div>
+
+            {/* Sensor Option */}
+            <div className="flex items-start space-x-3 border rounded-lg p-4 hover:bg-accent transition-colors cursor-pointer">
+              <RadioGroupItem value="sensor" id="sensor" className="mt-1" />
+              <Label htmlFor="sensor" className="flex-1 cursor-pointer">
+                <div className="font-semibold text-base mb-1">
+                  🌡️ {t('createThing.typeSensor')}
+                </div>
+                <div className="text-sm text-muted-foreground space-y-1">
+                  <p>{t('createThing.typeSensorDesc')}</p>
+                  <p className="text-xs italic">
+                    <strong>Example:</strong> Single DHT22 temperature sensor
+                  </p>
+                  <div className="flex gap-2 mt-2">
+                    <Badge variant="secondary" className="text-xs">DTDL: Simple Interface</Badge>
+                    <Badge variant="secondary" className="text-xs">Ditto: Single Feature</Badge>
+                  </div>
+                </div>
+              </Label>
+            </div>
+
+            {/* Component Option */}
+            <div className="flex items-start space-x-3 border rounded-lg p-4 hover:bg-accent transition-colors cursor-pointer">
+              <RadioGroupItem value="component" id="component" className="mt-1" />
+              <Label htmlFor="component" className="flex-1 cursor-pointer">
+                <div className="font-semibold text-base mb-1">
+                  🏗️ {t('createThing.typeComponent')}
+                </div>
+                <div className="text-sm text-muted-foreground space-y-1">
+                  <p>{t('createThing.typeComponentDesc')}</p>
+                  <p className="text-xs italic">
+                    <strong>Example:</strong> Building floor with multiple child sensors
+                  </p>
+                  <div className="flex gap-2 mt-2">
+                    <Badge variant="secondary" className="text-xs">DTDL: Components (Ideal!)</Badge>
+                    <Badge variant="secondary" className="text-xs">Uses Relationships</Badge>
+                  </div>
+                </div>
+              </Label>
+            </div>
+          </RadioGroup>
+
+          {/* Info Alert */}
+          <Alert className="mt-4">
+            <Info className="h-4 w-4" />
+            <AlertDescription className="text-xs">
+              <strong>Tip:</strong> Choose "Device" for physical units with multiple sensors.
+              Choose "Component" for logical groupings using relationships.
+            </AlertDescription>
+          </Alert>
+        </CardContent>
+      </Card>
+
+      {/* DTDL Interface Selection */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <FileCode className="h-5 w-5" />
+            {t('dtdl.useDTDL')}
+            <Badge variant="outline" className="ml-auto">Optional</Badge>
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            {t('dtdl.useDTDLDescription')}
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {!formData.dtdl_interface ? (
+            <div className="border-2 border-dashed rounded-lg p-6 text-center">
+              <FileCode className="h-12 w-12 mx-auto text-muted-foreground mb-3" />
+              <p className="text-sm text-muted-foreground mb-4">
+                {t('dtdl.noInterfaceSelected')}
+              </p>
+              <Button
+                onClick={() => setShowDTDLModal(true)}
+                variant="outline"
+                className="gap-2"
+              >
+                <FileCode className="h-4 w-4" />
+                {t('dtdl.selectInterface')}
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="border rounded-lg p-4 bg-accent/50">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex-1">
+                    <h4 className="font-semibold text-base">{formData.dtdl_interface.displayName}</h4>
+                    <p className="text-xs text-muted-foreground font-mono mt-1">
+                      {formData.dtdl_interface.dtmi}
+                    </p>
+                  </div>
+                  <Button
+                    onClick={handleRemoveDTDL}
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 w-8 p-0"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+                <p className="text-sm text-muted-foreground mb-3">
+                  {formData.dtdl_interface.description}
+                </p>
+
+                {formData.dtdl_interface_summary && (
+                  <div className="grid grid-cols-4 gap-2 mb-3">
+                    <div className="bg-background rounded p-2 text-center">
+                      <div className="text-lg font-bold text-blue-600">
+                        {formData.dtdl_interface_summary.telemetryCount}
+                      </div>
+                      <div className="text-xs text-muted-foreground">{t('dtdl.telemetry')}</div>
+                    </div>
+                    <div className="bg-background rounded p-2 text-center">
+                      <div className="text-lg font-bold text-green-600">
+                        {formData.dtdl_interface_summary.propertyCount}
+                      </div>
+                      <div className="text-xs text-muted-foreground">{t('dtdl.properties')}</div>
+                    </div>
+                    <div className="bg-background rounded p-2 text-center">
+                      <div className="text-lg font-bold text-purple-600">
+                        {formData.dtdl_interface_summary.commandCount}
+                      </div>
+                      <div className="text-xs text-muted-foreground">{t('dtdl.commands')}</div>
+                    </div>
+                    <div className="bg-background rounded p-2 text-center">
+                      <div className="text-lg font-bold text-orange-600">
+                        {formData.dtdl_interface_summary.componentCount}
+                      </div>
+                      <div className="text-xs text-muted-foreground">{t('dtdl.components')}</div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex gap-2">
+                  <Button
+                    onClick={() => setShowDTDLModal(true)}
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                  >
+                    {t('dtdl.changeInterface')}
+                  </Button>
+                  <Button
+                    onClick={handleAutoFillFromDTDL}
+                    variant="secondary"
+                    size="sm"
+                    className="flex-1"
+                    disabled={!formData.dtdl_interface_summary?.propertyNames?.length}
+                  >
+                    {t('dtdl.autoFill')}
+                  </Button>
+                </div>
+              </div>
+
+              <Alert>
+                <Info className="h-4 w-4" />
+                <AlertDescription className="text-xs">
+                  {t('dtdl.autoFillDescription')}
+                </AlertDescription>
+              </Alert>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       <div className="grid grid-cols-2 gap-6">
         {/* Left: Form */}
         <Card>
@@ -302,6 +600,54 @@ spec:
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               />
+            </div>
+
+            {/* Domain Metadata Section */}
+            <div className="border-t pt-4 mt-4">
+              <h3 className="text-sm font-semibold mb-3 flex items-center gap-2">
+                <Building2 className="h-4 w-4" />
+                {t('createThing.domainMetadata')}
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">{t('createThing.manufacturer')}</label>
+                  <Input
+                    placeholder={t('createThing.manufacturerPlaceholder')}
+                    value={formData.manufacturer}
+                    onChange={(e) => setFormData({ ...formData, manufacturer: e.target.value })}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">{t('createThing.model')}</label>
+                  <Input
+                    placeholder={t('createThing.modelPlaceholder')}
+                    value={formData.model}
+                    onChange={(e) => setFormData({ ...formData, model: e.target.value })}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">{t('createThing.serialNumber')}</label>
+                  <Input
+                    placeholder={t('createThing.serialNumberPlaceholder')}
+                    value={formData.serial_number}
+                    onChange={(e) => setFormData({ ...formData, serial_number: e.target.value })}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">
+                    {t('createThing.firmwareVersion')}
+                    <span className="text-muted-foreground ml-1">({t('common.optional')})</span>
+                  </label>
+                  <Input
+                    placeholder={t('createThing.firmwareVersionPlaceholder')}
+                    value={formData.firmware_version}
+                    onChange={(e) => setFormData({ ...formData, firmware_version: e.target.value })}
+                  />
+                </div>
+              </div>
             </div>
 
             <Tabs defaultValue="properties">
@@ -552,6 +898,15 @@ spec:
           </CardContent>
         </Card>
       </div>
+
+      {/* DTDL Selection Modal */}
+      <DTDLSelectionModal
+        isOpen={showDTDLModal}
+        onClose={() => setShowDTDLModal(false)}
+        onSelect={handleDTDLSelect}
+        thingType={formData.thing_type}
+        domain={null}
+      />
     </div>
   )
 }

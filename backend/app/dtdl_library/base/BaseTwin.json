@@ -1,0 +1,122 @@
+{
+  "@context": "dtmi:dtdl:context;2",
+  "@id": "dtmi:iodt2:BaseTwin;1",
+  "@type": "Interface",
+  "displayName": "Base Twin",
+  "description": "Base interface for all digital twins in IoDT2 platform. Provides common properties and capabilities.",
+  "comment": "All domain-specific interfaces should extend this base interface.",
+  "contents": [
+    {
+      "@type": "Property",
+      "name": "name",
+      "displayName": "Name",
+      "description": "Human-readable name of the twin",
+      "schema": "string",
+      "writable": false
+    },
+    {
+      "@type": "Property",
+      "name": "description",
+      "displayName": "Description",
+      "description": "Detailed description of the twin",
+      "schema": "string",
+      "writable": false
+    },
+    {
+      "@type": "Property",
+      "name": "manufacturer",
+      "displayName": "Manufacturer",
+      "description": "Manufacturer of the physical device",
+      "schema": "string",
+      "writable": false
+    },
+    {
+      "@type": "Property",
+      "name": "model",
+      "displayName": "Model",
+      "description": "Model name or number",
+      "schema": "string",
+      "writable": false
+    },
+    {
+      "@type": "Property",
+      "name": "serialNumber",
+      "displayName": "Serial Number",
+      "description": "Serial number of the physical device",
+      "schema": "string",
+      "writable": false
+    },
+    {
+      "@type": "Property",
+      "name": "firmwareVersion",
+      "displayName": "Firmware Version",
+      "description": "Current firmware version",
+      "schema": "string",
+      "writable": false
+    },
+    {
+      "@type": "Property",
+      "name": "tenant",
+      "displayName": "Tenant ID",
+      "description": "Tenant identifier for multi-tenancy support",
+      "schema": "string",
+      "writable": false
+    },
+    {
+      "@type": "Property",
+      "name": "status",
+      "displayName": "Status",
+      "description": "Current operational status of the twin",
+      "schema": {
+        "@type": "Enum",
+        "valueSchema": "string",
+        "enumValues": [
+          {
+            "name": "online",
+            "displayName": "Online",
+            "enumValue": "online"
+          },
+          {
+            "name": "offline",
+            "displayName": "Offline",
+            "enumValue": "offline"
+          },
+          {
+            "name": "error",
+            "displayName": "Error",
+            "enumValue": "error"
+          },
+          {
+            "name": "maintenance",
+            "displayName": "Maintenance",
+            "enumValue": "maintenance"
+          }
+        ]
+      },
+      "writable": true
+    },
+    {
+      "@type": "Property",
+      "name": "latitude",
+      "displayName": "Latitude",
+      "description": "Geographic latitude coordinate",
+      "schema": "double",
+      "writable": false
+    },
+    {
+      "@type": "Property",
+      "name": "longitude",
+      "displayName": "Longitude",
+      "description": "Geographic longitude coordinate",
+      "schema": "double",
+      "writable": false
+    },
+    {
+      "@type": "Telemetry",
+      "name": "lastUpdated",
+      "displayName": "Last Updated",
+      "description": "Timestamp of last data update",
+      "schema": "dateTime"
+    }
+  ]
+}

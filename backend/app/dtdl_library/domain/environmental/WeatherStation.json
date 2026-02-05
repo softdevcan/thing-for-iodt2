@@ -1,0 +1,67 @@
+{
+  "@context": "dtmi:dtdl:context;2",
+  "@id": "dtmi:iodt2:WeatherStation;1",
+  "@type": "Interface",
+  "displayName": "Weather Station",
+  "description": "Complete weather station with multiple environmental sensors (Component-based modeling)",
+  "extends": "dtmi:iodt2:BaseTwin;1",
+  "contents": [
+    {
+      "@type": "Component",
+      "name": "temperatureSensor",
+      "displayName": "Temperature Sensor",
+      "description": "Integrated temperature sensor",
+      "schema": "dtmi:iodt2:TemperatureSensor;1"
+    },
+    {
+      "@type": "Component",
+      "name": "humiditySensor",
+      "displayName": "Humidity Sensor",
+      "description": "Integrated humidity sensor",
+      "schema": "dtmi:iodt2:HumiditySensor;1"
+    },
+    {
+      "@type": "Telemetry",
+      "name": "pressure",
+      "displayName": "Atmospheric Pressure",
+      "description": "Current atmospheric pressure",
+      "schema": "double",
+      "unit": "pascal"
+    },
+    {
+      "@type": "Telemetry",
+      "name": "windSpeed",
+      "displayName": "Wind Speed",
+      "description": "Current wind speed",
+      "schema": "double",
+      "unit": "metrePerSecond"
+    },
+    {
+      "@type": "Telemetry",
+      "name": "windDirection",
+      "displayName": "Wind Direction",
+      "description": "Wind direction in degrees (0-360)",
+      "schema": "integer"
+    },
+    {
+      "@type": "Telemetry",
+      "name": "rainfall",
+      "displayName": "Rainfall",
+      "description": "Rainfall measurement",
+      "schema": "double",
+      "unit": "millimetre"
+    },
+    {
+      "@type": "Command",
+      "name": "startDataCollection",
+      "displayName": "Start Data Collection",
+      "description": "Begin continuous data collection from all sensors"
+    },
+    {
+      "@type": "Command",
+      "name": "stopDataCollection",
+      "displayName": "Stop Data Collection",
+      "description": "Stop data collection"
+    }
+  ]
+}

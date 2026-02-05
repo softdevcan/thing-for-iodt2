@@ -412,6 +412,9 @@ class TwinScaleRDFService:
             if "generated-at" in labels:
                 graph.add((interface_uri, self.TS.generatedAt,
                           Literal(labels["generated-at"], datatype=XSD.dateTime)))
+            # NEW: Thing Type
+            if "thing-type" in labels:
+                graph.add((interface_uri, self.TS.thingType, Literal(labels["thing-type"])))
 
         if "annotations" in interface_data["metadata"]:
             annotations = interface_data["metadata"]["annotations"]
@@ -419,6 +422,22 @@ class TwinScaleRDFService:
                 graph.add((interface_uri, self.TS.sourceFormat, Literal(annotations["source"])))
             if "original-id" in annotations:
                 graph.add((interface_uri, self.TS.originalId, Literal(annotations["original-id"])))
+            # NEW: Domain Metadata
+            if "manufacturer" in annotations:
+                graph.add((interface_uri, self.TS.manufacturer, Literal(annotations["manufacturer"])))
+            if "model" in annotations:
+                graph.add((interface_uri, self.TS.model, Literal(annotations["model"])))
+            if "serialNumber" in annotations:
+                graph.add((interface_uri, self.TS.serialNumber, Literal(annotations["serialNumber"])))
+            if "firmwareVersion" in annotations:
+                graph.add((interface_uri, self.TS.firmwareVersion, Literal(annotations["firmwareVersion"])))
+            # NEW: DTDL Metadata
+            if "dtdl-interface" in annotations:
+                graph.add((interface_uri, self.TS.dtdlInterface, Literal(annotations["dtdl-interface"])))
+            if "dtdl-interface-name" in annotations:
+                graph.add((interface_uri, self.TS.dtdlInterfaceName, Literal(annotations["dtdl-interface-name"])))
+            if "dtdl-category" in annotations:
+                graph.add((interface_uri, self.TS.dtdlCategory, Literal(annotations["dtdl-category"])))
 
         spec = interface_data.get("spec", {})
 

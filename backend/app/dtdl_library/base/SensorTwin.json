@@ -1,0 +1,95 @@
+{
+  "@context": "dtmi:dtdl:context;2",
+  "@id": "dtmi:iodt2:SensorTwin;1",
+  "@type": "Interface",
+  "displayName": "Sensor Twin",
+  "description": "Base interface for sensor devices. Extends BaseTwin with sensor-specific capabilities.",
+  "extends": "dtmi:iodt2:BaseTwin;1",
+  "contents": [
+    {
+      "@type": "Property",
+      "name": "sensorType",
+      "displayName": "Sensor Type",
+      "description": "Type of sensor (temperature, humidity, pressure, etc.)",
+      "schema": "string",
+      "writable": false
+    },
+    {
+      "@type": "Property",
+      "name": "measurementUnit",
+      "displayName": "Measurement Unit",
+      "description": "Unit of measurement for sensor readings",
+      "schema": "string",
+      "writable": false
+    },
+    {
+      "@type": "Property",
+      "name": "samplingRate",
+      "displayName": "Sampling Rate",
+      "description": "How often the sensor takes measurements (in Hz)",
+      "schema": "double",
+      "writable": true
+    },
+    {
+      "@type": "Property",
+      "name": "accuracy",
+      "displayName": "Accuracy",
+      "description": "Accuracy of sensor measurements (±)",
+      "schema": "double",
+      "writable": false
+    },
+    {
+      "@type": "Property",
+      "name": "minValue",
+      "displayName": "Minimum Value",
+      "description": "Minimum measurable value",
+      "schema": "double",
+      "writable": false
+    },
+    {
+      "@type": "Property",
+      "name": "maxValue",
+      "displayName": "Maximum Value",
+      "description": "Maximum measurable value",
+      "schema": "double",
+      "writable": false
+    },
+    {
+      "@type": "Command",
+      "name": "calibrate",
+      "displayName": "Calibrate Sensor",
+      "description": "Trigger sensor calibration",
+      "request": {
+        "name": "calibrationMode",
+        "displayName": "Calibration Mode",
+        "description": "Type of calibration to perform",
+        "schema": {
+          "@type": "Enum",
+          "valueSchema": "string",
+          "enumValues": [
+            {
+              "name": "auto",
+              "displayName": "Automatic",
+              "enumValue": "auto"
+            },
+            {
+              "name": "manual",
+              "displayName": "Manual",
+              "enumValue": "manual"
+            }
+          ]
+        }
+      },
+      "response": {
+        "name": "calibrationResult",
+        "schema": "boolean"
+      }
+    },
+    {
+      "@type": "Command",
+      "name": "reset",
+      "displayName": "Reset Sensor",
+      "description": "Reset sensor to default state"
+    }
+  ]
+}
