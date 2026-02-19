@@ -1,58 +1,56 @@
 # IoDT2 Thing Description
 
-**IoDT2 Thing Description**, DTDL (Digital Twins Definition Language) tabanli dijital ikiz yonetim sistemidir. YAML formatini kullanarak dijital ikizleri olusturmaniza, yonetmenize ve sorgulamaniza olanak tanir.
+A DTDL (Digital Twins Definition Language) based digital twin management system. Create, manage, and query digital twins using human-readable YAML format.
 
-## Hizli Baslangic (Quick Start)
+## Quick Start
 
 ```bash
-# 1. Projeyi klonlayin
+# 1. Clone the project
 git clone <repository-url>
 cd thing-for-twinscale
 
-# 2. Docker ile baslatin (Onerilen)
+# 2. Start with Docker (Recommended)
 docker-compose up -d
 
-# 3. Tarayicinizda acin
+# 3. Open in your browser
 # Frontend: http://localhost:3005
 # API Docs: http://localhost:3015/docs
 ```
 
 ---
 
-## Icerikler
+## Table of Contents
 
-- [Ozellikler](#ozellikler)
-- [Mimari](#mimari)
-- [Kurulum](#kurulum)
-  - [Docker ile Kurulum (Onerilen)](#docker-ile-kurulum-onerilen)
-  - [Manuel Kurulum](#manuel-kurulum)
-- [Kullanim](#kullanim)
-  - [Docker ile Kullanim](#docker-ile-kullanim)
-  - [Manuel Kullanim](#manuel-kullanim)
-  - [DTDL Islemleri](#dtdl-islemleri)
-  - [Thing Yonetimi](#thing-yonetimi)
-  - [YAML Sorgulari](#yaml-sorgulari)
-- [DTDL Kutuphanesi](#dtdl-kutuphanesi)
-- [API Dokumantasyonu](#api-dokumantasyonu)
-- [Test](#test)
-- [Sorun Giderme](#sorun-giderme-troubleshooting)
-- [Proje Yapisi](#proje-yapisi)
+- [Features](#features)
+- [Architecture](#architecture)
+- [Installation](#installation)
+  - [Docker Installation (Recommended)](#docker-installation-recommended)
+  - [Manual Installation](#manual-installation)
+- [Usage](#usage)
+  - [DTDL Operations](#dtdl-operations)
+  - [Thing Management](#thing-management)
+  - [YAML Queries](#yaml-queries)
+- [DTDL Library](#dtdl-library)
+- [API Documentation](#api-documentation)
+- [Testing](#testing)
+- [Troubleshooting](#troubleshooting)
+- [Project Structure](#project-structure)
 
 ---
 
-## Ozellikler
+## Features
 
-- **DTDL Destegi**: Standart DTDL (v3) arayuzleri ile uyumlu
-- **YAML Format**: Insan okunabilir YAML formatinda dijital ikiz tanimlari
-- **Moduler Kutuphane**: Cevresel sensorler, sismik algilayicilar, hava kalitesi sensorleri
-- **Dogrulama**: DTDL semalarina gore otomatik dogrulama
-- **Donusturme**: DTDL <-> YAML cift yonlu donusum
-- **REST API**: FastAPI tabanli modern REST API
-- **React Frontend**: Kullanici dostu web arayuzu
+- **DTDL Support**: Compatible with standard DTDL (v3) interfaces
+- **YAML Format**: Human-readable YAML format for digital twin definitions
+- **Modular Library**: Environmental sensors, seismic detectors, air quality sensors
+- **Validation**: Automatic validation against DTDL schemas
+- **Conversion**: Bidirectional DTDL <-> YAML conversion
+- **REST API**: Modern REST API powered by FastAPI
+- **React Frontend**: User-friendly web interface
 
 ---
 
-## Mimari
+## Architecture
 
 ### Backend (Python/FastAPI)
 
@@ -61,31 +59,31 @@ backend/
 ├── app/
 │   ├── api/              # API endpoints
 │   │   └── v2/
-│   │       ├── dtdl.py   # DTDL arayuz yonetimi
-│   │       ├── twin.py   # Thing yonetimi
-│   │       ├── fuseki.py # Fuseki RDF islemleri
-│   │       └── tenants.py # Tenant yonetimi
-│   ├── services/         # Is mantigi servisleri
-│   │   ├── dtdl_loader_service.py      # DTDL yukleme ve cache
-│   │   ├── dtdl_converter_service.py   # DTDL <-> YAML donusum
-│   │   ├── dtdl_validator_service.py   # DTDL dogrulama
-│   │   ├── twin_generator_service.py   # Thing olusturma
-│   │   ├── twin_rdf_service.py         # RDF islemleri
-│   │   ├── tenant_manager.py           # Tenant yonetimi
-│   │   └── location_service.py         # Konum servisi
-│   ├── dtdl_library/     # DTDL arayuz kutuphanesi
-│   │   ├── base/         # Temel arayuzler (BaseTwin, SensorTwin, vb.)
-│   │   ├── domain/       # Alan-spesifik arayuzler
-│   │   │   ├── environmental/  # Cevresel sensorler
-│   │   │   ├── air_quality/    # Hava kalitesi sensorleri
-│   │   │   └── seismic/        # Sismik algilayicilar
-│   │   └── registry.json # Arayuz kayit defteri
-│   ├── models/           # SQLAlchemy modelleri
-│   ├── schemas/          # Pydantic semalari
-│   └── core/             # Temel yapilandirma
-├── tests/                # Test dosyalari
-├── scripts/              # Yardimci scriptler
-└── main.py               # Uygulama giris noktasi
+│   │       ├── dtdl.py   # DTDL interface management
+│   │       ├── twin.py   # Thing management
+│   │       ├── fuseki.py # Fuseki RDF operations
+│   │       └── tenants.py # Tenant management
+│   ├── services/         # Business logic services
+│   │   ├── dtdl_loader_service.py      # DTDL loading and caching
+│   │   ├── dtdl_converter_service.py   # DTDL <-> YAML conversion
+│   │   ├── dtdl_validator_service.py   # DTDL validation
+│   │   ├── twin_generator_service.py   # Thing generation
+│   │   ├── twin_rdf_service.py         # RDF operations
+│   │   ├── tenant_manager.py           # Tenant management
+│   │   └── location_service.py         # Location service
+│   ├── dtdl_library/     # DTDL interface library
+│   │   ├── base/         # Base interfaces (BaseTwin, SensorTwin, etc.)
+│   │   ├── domain/       # Domain-specific interfaces
+│   │   │   ├── environmental/  # Environmental sensors
+│   │   │   ├── air_quality/    # Air quality sensors
+│   │   │   └── seismic/        # Seismic detectors
+│   │   └── registry.json # Interface registry
+│   ├── models/           # SQLAlchemy models
+│   ├── schemas/          # Pydantic schemas
+│   └── core/             # Core configuration
+├── tests/                # Test files
+├── scripts/              # Utility scripts
+└── main.py               # Application entry point
 ```
 
 ### Frontend (React/Vite)
@@ -93,86 +91,83 @@ backend/
 ```
 frontend/
 ├── src/
-│   ├── api/              # API istemcileri
-│   ├── components/       # React bilesenleri
-│   │   ├── dtdl/         # DTDL bilesenleri
-│   │   └── twin/         # Thing bilesenleri
-│   ├── pages/            # Sayfa bilesenleri
-│   │   └── twin/         # Thing sayfalari
-│   ├── services/         # Servis katmani
-│   └── locales/          # i18n cevirileri
+│   ├── api/              # API clients
+│   ├── components/       # React components
+│   │   ├── dtdl/         # DTDL components
+│   │   └── twin/         # Thing components
+│   ├── pages/            # Page components
+│   │   └── twin/         # Thing pages
+│   ├── services/         # Service layer
+│   └── locales/          # i18n translations
 └── ...
 ```
 
 ---
 
-## Kurulum
+## Installation
 
-### Docker ile Kurulum (Onerilen)
+### Docker Installation (Recommended)
 
-En hizli ve kolay yol! Sadece birkac komutla tum sistemi ayaga kaldirin.
-
-#### Gereksinimler
+#### Prerequisites
 - **Docker** 20.10+
 - **Docker Compose** 2.0+
 
-#### Kurulum Adimlari
+#### Steps
 
 ```bash
-# 1. Tum servisleri baslat (Backend, Frontend, Fuseki)
+# 1. Start all services (Backend, Frontend, Fuseki)
 docker-compose up -d
 
-# 2. Loglari izle (opsiyonel)
+# 2. Watch logs (optional)
 docker-compose logs -f
 
-# 3. Durum kontrolu
+# 3. Check status
 docker-compose ps
 ```
 
-Sisteminiz su adreslerde calisiyor:
+Services will be available at:
 
 - **Frontend**: http://localhost:3005
 - **Backend API**: http://localhost:3015
 - **Fuseki (RDF Store)**: http://localhost:3030
 - **API Docs**: http://localhost:3015/docs
 
-#### Docker Komutlari
+#### Docker Commands
 
 ```bash
-# Servisleri durdur
+# Stop services
 docker-compose down
 
-# Servisleri durdur ve verileri sil
+# Stop services and remove volumes
 docker-compose down -v
 
-# Servisleri yeniden baslat
+# Restart services
 docker-compose restart
 
-# Belirli bir servisi yeniden baslat
+# Restart a specific service
 docker-compose restart backend
 
-# Loglari goruntule
+# View logs
 docker-compose logs backend
 docker-compose logs frontend
 docker-compose logs fuseki
 
-# Container'a baglan (debugging)
+# Attach to a container (debugging)
 docker-compose exec backend bash
 docker-compose exec frontend sh
 
-# Servisleri guncelle (yeni degisiklikler icin)
+# Rebuild services (after code changes)
 docker-compose up -d --build
 ```
 
 #### Health Check
 
-Tum servisler otomatik health check yapilandirmasi ile geliyor:
+All services come with automatic health check configuration:
 
 ```bash
-# Servis durumunu kontrol et
 docker-compose ps
 
-# Detayli health durumu
+# Detailed health status
 docker inspect iodt2-thing-backend | grep -A 10 "Health"
 docker inspect iodt2-thing-frontend | grep -A 10 "Health"
 docker inspect iodt2-thing-fuseki | grep -A 10 "Health"
@@ -180,102 +175,76 @@ docker inspect iodt2-thing-fuseki | grep -A 10 "Health"
 
 ---
 
-### Manuel Kurulum
+### Manual Installation
 
-Gelistirme ortami icin manuel kurulum:
+For local development:
 
-#### Gereksinimler
+#### Prerequisites
 
 - **Python** 3.9+
 - **Node.js** 16+
-- **npm** veya **yarn**
+- **npm** or **yarn**
 
-#### Backend Kurulumu
+#### Backend Setup
 
 ```bash
-# Backend dizinine gidin
 cd backend
 
-# Sanal ortam olusturun
+# Create virtual environment
 python -m venv venv
 
-# Sanal ortami etkinlestirin
+# Activate virtual environment
 # Windows:
 venv\Scripts\activate
 # Linux/Mac:
 source venv/bin/activate
 
-# Bagimliliklari yukleyin
+# Install dependencies
 pip install -r requirements.txt
 
-# Ortam degiskenlerini yapilandirin
+# Configure environment variables
 cp .env.example .env
-# .env dosyasini duzenleyin
+# Edit .env as needed
 ```
 
-#### Frontend Kurulumu
+#### Frontend Setup
 
 ```bash
-# Frontend dizinine gidin
 cd frontend
 
-# Bagimliliklari yukleyin
+# Install dependencies
 npm install
 
-# Ortam degiskenlerini yapilandirin
+# Configure environment variables
 cp .env.example .env
-# .env dosyasini duzenleyin
+# Edit .env as needed
 ```
 
----
-
-## Kullanim
-
-### Docker ile Kullanim
+#### Running Locally
 
 ```bash
-# Tum servisleri baslat
-docker-compose up -d
-
-# Uygulamaya erisim
-# Frontend: http://localhost:3005
-# Backend: http://localhost:3015
-# API Docs: http://localhost:3015/docs
-```
-
-### Manuel Kullanim
-
-#### Backend API'yi Baslatma
-
-```bash
+# Backend (http://localhost:3015)
 cd backend
 python main.py
-```
 
-Backend varsayilan olarak `http://localhost:3015` adresinde calisir.
-
-#### Frontend'i Baslatma
-
-```bash
+# Frontend (http://localhost:5173)
 cd frontend
 npm run dev
 ```
 
-Frontend varsayilan olarak `http://localhost:5173` adresinde calisir.
-
 ---
 
-## DTDL Islemleri
+## DTDL Operations
 
-### 1. Mevcut DTDL Arayuzlerini Listeleme
+### 1. List DTDL Interfaces
 
-**API Endpoint:** `GET /api/v2/dtdl/interfaces`
+**Endpoint:** `GET /api/v2/dtdl/interfaces`
 
 ```bash
 curl http://localhost:3015/api/v2/dtdl/interfaces
 ```
 
-**Yanit:**
+**Response:**
 ```json
 [
   {
@@ -293,23 +262,23 @@ curl http://localhost:3015/api/v2/dtdl/interfaces
 ]
 ```
 
-### 2. DTDL Arayuz Detaylarini Goruntuleme
+### 2. Get Interface Details
 
-**API Endpoint:** `GET /api/v2/dtdl/interfaces/{dtmi}`
+**Endpoint:** `GET /api/v2/dtdl/interfaces/{dtmi}`
 
 ```bash
 curl "http://localhost:3015/api/v2/dtdl/interfaces/dtmi:twinscale:environmental:TemperatureSensor;1"
 ```
 
-### 3. DTDL Gereksinimlerini Ogrenme
+### 3. Get Interface Requirements
 
-**API Endpoint:** `GET /api/v2/dtdl/interfaces/{dtmi}/requirements`
+**Endpoint:** `GET /api/v2/dtdl/interfaces/{dtmi}/requirements`
 
 ```bash
 curl "http://localhost:3015/api/v2/dtdl/interfaces/dtmi:twinscale:environmental:TemperatureSensor;1/requirements"
 ```
 
-**Yanit:**
+**Response:**
 ```json
 {
   "requiredProperties": [
@@ -330,9 +299,9 @@ curl "http://localhost:3015/api/v2/dtdl/interfaces/dtmi:twinscale:environmental:
 }
 ```
 
-### 4. DTDL'den YAML Sablonu Olusturma
+### 4. Generate YAML Template from DTDL
 
-**API Endpoint:** `POST /api/v2/dtdl/convert/to-twinscale`
+**Endpoint:** `POST /api/v2/dtdl/convert/to-twinscale`
 
 ```bash
 curl -X POST "http://localhost:3015/api/v2/dtdl/convert/to-twinscale" \
@@ -346,13 +315,13 @@ curl -X POST "http://localhost:3015/api/v2/dtdl/convert/to-twinscale" \
 
 ---
 
-## Thing Yonetimi
+## Thing Management
 
-### 1. Thing Olusturma (YAML)
+### 1. Create a Thing (YAML)
 
-**API Endpoint:** `POST /api/v2/twin/things`
+**Endpoint:** `POST /api/v2/twin/things`
 
-**YAML Thing Tanimi:**
+**YAML Thing Definition:**
 ```yaml
 thing:
   name: MyOfficeTemperatureSensor
@@ -375,38 +344,38 @@ curl -X POST "http://localhost:3015/api/v2/twin/things" \
   --data-binary @thing.yaml
 ```
 
-### 2. Thing Listeleme
+### 2. List Things
 
-**API Endpoint:** `GET /api/v2/twin/things`
+**Endpoint:** `GET /api/v2/twin/things`
 
-**Filtreleme Parametreleri:**
-- `tenant`: Tenant ID'ye gore filtrele
-- `interface`: Arayuz adina gore filtrele
-- `limit`: Sonuc sayisini sinirla (varsayilan: 100)
-- `offset`: Pagination icin offset
+**Query Parameters:**
+- `tenant`: Filter by tenant ID
+- `interface`: Filter by interface name
+- `limit`: Limit number of results (default: 100)
+- `offset`: Pagination offset
 
 ```bash
-# Tum things
+# All things
 curl "http://localhost:3015/api/v2/twin/things"
 
-# Tenant'a gore filtrele
+# Filter by tenant
 curl "http://localhost:3015/api/v2/twin/things?tenant=office-building"
 
-# Interface'e gore filtrele
+# Filter by interface
 curl "http://localhost:3015/api/v2/twin/things?interface=TemperatureSensor"
 ```
 
-### 3. Thing Detaylarini Goruntuleme
+### 3. Get Thing Details
 
-**API Endpoint:** `GET /api/v2/twin/things/{thing_id}`
+**Endpoint:** `GET /api/v2/twin/things/{thing_id}`
 
 ```bash
 curl "http://localhost:3015/api/v2/twin/things/1"
 ```
 
-### 4. Thing Guncelleme
+### 4. Update a Thing
 
-**API Endpoint:** `PUT /api/v2/twin/things/{thing_id}`
+**Endpoint:** `PUT /api/v2/twin/things/{thing_id}`
 
 ```bash
 curl -X PUT "http://localhost:3015/api/v2/twin/things/1" \
@@ -414,9 +383,9 @@ curl -X PUT "http://localhost:3015/api/v2/twin/things/1" \
   --data-binary @updated-thing.yaml
 ```
 
-### 5. Thing Silme
+### 5. Delete a Thing
 
-**API Endpoint:** `DELETE /api/v2/twin/things/{thing_id}`
+**Endpoint:** `DELETE /api/v2/twin/things/{thing_id}`
 
 ```bash
 curl -X DELETE "http://localhost:3015/api/v2/twin/things/1"
@@ -424,51 +393,49 @@ curl -X DELETE "http://localhost:3015/api/v2/twin/things/1"
 
 ---
 
-## YAML Sorgulari
+## YAML Queries
 
-### YAML Icerigini Arama
+Search key-value pairs within YAML content:
 
-YAML iceriginde anahtar-deger ciftlerini aramak icin sorgulama ozellikleri:
-
-**API Endpoint:** `GET /api/v2/twin/things/search`
+**Endpoint:** `GET /api/v2/twin/things/search`
 
 ```bash
-# Belirli bir sicaklik degerine sahip tum sensorler
+# Find all sensors with a specific temperature value
 curl "http://localhost:3015/api/v2/twin/things/search?query=properties.temperature&value=23.5"
 
-# Belirli bir konumdaki tum cihazlar
+# Find all devices at a specific location
 curl "http://localhost:3015/api/v2/twin/things/search?query=properties.location&value=Office%20Room%20101"
 ```
 
 ---
 
-## DTDL Kutuphanesi
+## DTDL Library
 
-### Mevcut Arayuzler
+### Available Interfaces
 
-#### Base Arayuzler
-- **BaseTwin** (`dtmi:twinscale:BaseTwin;1`): Tum dijital ikizler icin temel arayuz
-- **SensorTwin** (`dtmi:twinscale:SensorTwin;1`): Sensorler icin temel arayuz
-- **ActuatorTwin** (`dtmi:twinscale:ActuatorTwin;1`): Aktuatorler icin temel arayuz
-- **GatewayTwin** (`dtmi:twinscale:GatewayTwin;1`): Ag gecitleri icin temel arayuz
+#### Base Interfaces
+- **BaseTwin** (`dtmi:twinscale:BaseTwin;1`) - Base interface for all digital twins
+- **SensorTwin** (`dtmi:twinscale:SensorTwin;1`) - Base interface for sensors
+- **ActuatorTwin** (`dtmi:twinscale:ActuatorTwin;1`) - Base interface for actuators
+- **GatewayTwin** (`dtmi:twinscale:GatewayTwin;1`) - Base interface for gateways
 
-#### Cevresel Sensorler (Environmental)
+#### Environmental Sensors
 - **TemperatureSensor** (`dtmi:twinscale:environmental:TemperatureSensor;1`)
 - **HumiditySensor** (`dtmi:twinscale:environmental:HumiditySensor;1`)
 - **WeatherStation** (`dtmi:twinscale:environmental:WeatherStation;1`)
 
-#### Hava Kalitesi Sensorleri (Air Quality)
+#### Air Quality Sensors
 - **PM25Sensor** (`dtmi:twinscale:air_quality:PM25Sensor;1`)
 
-#### Sismik Sensorler (Seismic)
+#### Seismic Sensors
 - **Building** (`dtmi:twinscale:seismic:Building;1`)
 - **Street** (`dtmi:twinscale:seismic:Street;1`)
 - **BaseStation** (`dtmi:twinscale:seismic:BaseStation;1`)
 - **SeismicSensor** (`dtmi:twinscale:seismic:SeismicSensor;1`)
 
-### Yeni DTDL Arayuzu Ekleme
+### Adding a New DTDL Interface
 
-1. **DTDL JSON dosyasini olusturun:**
+1. **Create the DTDL JSON file:**
 
 ```json
 {
@@ -489,12 +456,12 @@ curl "http://localhost:3015/api/v2/twin/things/search?query=properties.location&
 }
 ```
 
-2. **Dosyayi uygun dizine kaydedin:**
+2. **Save it to the appropriate directory:**
 ```
 backend/app/dtdl_library/domain/my_domain/MySensor.json
 ```
 
-3. **registry.json dosyasini guncelleyin:**
+3. **Update `registry.json`:**
 ```json
 {
   "dtmi": "dtmi:twinscale:domain:MySensor;1",
@@ -506,73 +473,67 @@ backend/app/dtdl_library/domain/my_domain/MySensor.json
 }
 ```
 
-4. **Backend'i yeniden baslatin:**
+4. **Restart the backend:**
 ```bash
 python main.py
 ```
 
 ---
 
-## API Dokumantasyonu
+## API Documentation
 
-Backend calistiginda, interaktif API dokumantasyonuna su adresten erisebilirsiniz:
+When the backend is running, interactive API documentation is available at:
 
 - **Swagger UI**: http://localhost:3015/docs
 - **ReDoc**: http://localhost:3015/redoc
 
 ---
 
-## Test
-
-### Test Dosyalarini Calistirma
+## Testing
 
 ```bash
 cd backend
 
-# Tum testleri calistir
+# Run all tests
 pytest tests/
 
-# Belirli bir test dosyasini calistir
+# Run a specific test file
 pytest tests/test_dtdl_loader.py
 
-# Verbose cikti ile
+# Verbose output
 pytest tests/ -v
 
-# Coverage raporu ile
+# With coverage report
 pytest tests/ --cov=app
 ```
 
-### Docker Container'da Test
+### Testing in Docker
 
 ```bash
-# Backend container'inda testleri calistir
 docker-compose exec backend pytest tests/ -v
 ```
 
 ---
 
-## Sorun Giderme (Troubleshooting)
+## Troubleshooting
 
-### Docker ile Ilgili Sorunlar
-
-#### Container'lar baslamiyor
+### Containers not starting
 
 ```bash
-# Loglari kontrol edin
+# Check logs
 docker-compose logs
 
-# Belirli bir servisin logunu kontrol edin
+# Check a specific service
 docker-compose logs backend
 
-# Container'lari temizleyin ve yeniden baslatin
+# Clean up and restart
 docker-compose down -v
 docker-compose up -d --build
 ```
 
-#### Port zaten kullanimda
+### Port already in use
 
 ```bash
-# Cakisan portlari kontrol edin
 # Windows:
 netstat -ano | findstr :3015
 netstat -ano | findstr :3005
@@ -584,152 +545,130 @@ lsof -i :3005
 lsof -i :3030
 ```
 
-#### Backend Fuseki'ye baglanamiyorsa
+### Backend cannot connect to Fuseki
 
 ```bash
 # Fuseki health check
 curl http://localhost:3030/$/ping
 
-# Fuseki loglarini kontrol edin
+# Check Fuseki logs
 docker-compose logs fuseki
 
-# Network kontrolu
+# Network inspection
 docker network inspect iodt2-network
 ```
 
-#### Frontend backend'e erisemiyorsa
+### Frontend cannot reach backend
 
 ```bash
-# Backend baglantisini test edin (container icinden)
+# Test backend connection from container
 docker-compose exec frontend curl http://backend:3015/health
 
-# Frontend'i yeniden build edin
+# Rebuild frontend
 docker-compose up -d --build frontend
 ```
 
-### Genel Sorunlar
-
-#### DTDL arayuzu yuklenmiyor
+### DTDL interface not loading
 
 ```bash
-# Registry dosyasini kontrol edin
+# Check registry file
 cat backend/app/dtdl_library/registry.json
 
-# DTDL dosyasinin varligini kontrol edin
+# Verify DTDL files exist
 ls -la backend/app/dtdl_library/domain/
 
-# Backend loglarini kontrol edin
+# Check backend logs
 docker-compose logs backend | grep -i dtdl
 ```
 
-#### CORS hatasi
+### CORS error
 
 ```bash
-# Backend .env dosyasini kontrol edin
+# Check backend .env
 grep CORS backend/.env
 
-# CORS_ORIGINS ortam degiskenini guncelleyin
+# Update CORS_ORIGINS environment variable
 CORS_ORIGINS=http://localhost,http://localhost:3005,http://localhost:5173
 ```
 
 ---
 
-## Proje Yapisi
+## Project Structure
 
 ```
 thing-for-twinscale/
 ├── backend/                      # Python/FastAPI backend
 │   ├── app/
-│   │   ├── api/                  # API endpoints
-│   │   │   └── v2/
-│   │   │       ├── dtdl.py       # DTDL API
-│   │   │       ├── twin.py       # Thing API
-│   │   │       ├── fuseki.py     # Fuseki API
-│   │   │       └── tenants.py    # Tenant API
-│   │   ├── core/                 # Temel yapilandirma
-│   │   │   ├── config.py         # Ayarlar
-│   │   │   ├── database.py       # Veritabani
-│   │   │   └── twin_ontology.py  # Ontoloji tanimlari
-│   │   ├── dtdl_library/         # DTDL arayuz kutuphanesi
-│   │   │   ├── base/             # Temel arayuzler
-│   │   │   │   ├── BaseTwin.json
-│   │   │   │   ├── SensorTwin.json
-│   │   │   │   ├── ActuatorTwin.json
-│   │   │   │   └── GatewayTwin.json
-│   │   │   ├── domain/           # Alan-spesifik arayuzler
-│   │   │   │   ├── environmental/
-│   │   │   │   ├── air_quality/
-│   │   │   │   └── seismic/
+│   │   ├── api/v2/              # API endpoints
+│   │   │   ├── dtdl.py          # DTDL API
+│   │   │   ├── twin.py          # Thing API
+│   │   │   ├── fuseki.py        # Fuseki API
+│   │   │   └── tenants.py       # Tenant API
+│   │   ├── core/                # Core configuration
+│   │   │   ├── config.py
+│   │   │   ├── database.py
+│   │   │   └── twin_ontology.py
+│   │   ├── dtdl_library/        # DTDL interface library
+│   │   │   ├── base/            # Base interfaces
+│   │   │   ├── domain/          # Domain-specific interfaces
 │   │   │   └── registry.json
-│   │   ├── models/               # SQLAlchemy ORM modelleri
-│   │   ├── schemas/              # Pydantic semalari
-│   │   └── services/             # Is mantigi servisleri
-│   ├── tests/                    # Test dosyalari
-│   ├── scripts/                  # Yardimci scriptler
-│   ├── main.py                   # Uygulama giris noktasi
-│   ├── requirements.txt          # Python bagimliliklari
-│   └── Dockerfile                # Backend Docker image
+│   │   ├── models/              # SQLAlchemy ORM models
+│   │   ├── schemas/             # Pydantic schemas
+│   │   └── services/            # Business logic services
+│   ├── tests/
+│   ├── scripts/
+│   ├── main.py
+│   ├── requirements.txt
+│   └── Dockerfile
 │
-├── frontend/                     # React/Vite frontend
+├── frontend/                    # React/Vite frontend
 │   ├── src/
-│   │   ├── api/                  # API istemcileri
-│   │   ├── components/           # React bilesenleri
-│   │   │   ├── dtdl/             # DTDL UI bilesenleri
-│   │   │   └── twin/             # Thing UI bilesenleri
-│   │   ├── pages/                # Sayfa bilesenleri
-│   │   │   └── twin/             # Thing sayfalari
-│   │   ├── services/             # Servis katmani
-│   │   └── locales/              # i18n cevirileri
-│   ├── package.json              # Node bagimliliklari
-│   ├── vite.config.js            # Vite yapilandirmasi
-│   ├── Dockerfile                # Frontend Docker image
-│   └── nginx.conf                # Nginx yapilandirmasi
+│   │   ├── api/                 # API clients
+│   │   ├── components/          # React components
+│   │   │   ├── dtdl/
+│   │   │   └── twin/
+│   │   ├── pages/twin/          # Thing pages
+│   │   ├── services/
+│   │   └── locales/             # i18n translations
+│   ├── package.json
+│   ├── vite.config.js
+│   ├── Dockerfile
+│   └── nginx.conf
 │
-├── docker-compose.yml            # Docker Compose yapilandirmasi
-└── README.md                     # Bu dosya
+├── docker-compose.yml
+└── README.md
 ```
 
-### Docker Servisleri
+### Docker Services
 
-Docker Compose ile 3 servis ayaga kaldirilir:
+Docker Compose runs 3 services:
 
-1. **fuseki** (Port 3030): Apache Jena Fuseki RDF Triple Store
-   - SPARQL endpoint
-   - RDF veri saklama
-   - 2GB JVM heap memory
-
-2. **backend** (Port 3015): FastAPI backend
-   - REST API
-   - DTDL yonetimi
-   - Thing YAML isleme
-   - SQLite veritabani
-
-3. **frontend** (Port 3005): React + Nginx
-   - SPA web arayuzu
-   - Nginx reverse proxy
+| Service | Port | Description |
+|---------|------|-------------|
+| **fuseki** | 3030 | Apache Jena Fuseki RDF Triple Store (SPARQL endpoint, 2GB JVM heap) |
+| **backend** | 3015 | FastAPI backend (REST API, DTDL management, YAML processing, SQLite) |
+| **frontend** | 3005 | React + Nginx (SPA web interface, reverse proxy) |
 
 ---
 
-## Katkida Bulunma
+## Contributing
 
-Katkilarinizi bekliyoruz! Lutfen:
-
-1. Fork yapin
-2. Feature branch olusturun (`git checkout -b feature/amazing-feature`)
-3. Degisikliklerinizi commit edin (`git commit -m 'Add amazing feature'`)
-4. Branch'inizi push edin (`git push origin feature/amazing-feature`)
-5. Pull Request acin
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ---
 
-## Lisans
+## License
 
-Bu proje MIT lisansi altinda lisanslanmistir.
+This project is licensed under the MIT License.
 
 ---
 
-## Tesekkurler
+## Acknowledgments
 
 - [FastAPI](https://fastapi.tiangolo.com/) - Modern Python web framework
-- [React](https://react.dev/) - UI kutuphanesi
+- [React](https://react.dev/) - UI library
 - [DTDL](https://github.com/Azure/opendigitaltwins-dtdl) - Digital Twins Definition Language
